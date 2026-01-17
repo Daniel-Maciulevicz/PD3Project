@@ -1,9 +1,9 @@
 using PD3Stars.Models;
-using System;
+using PD3Stars.UI;
 using System.ComponentModel;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 namespace PD3Stars.Presenters
 {
@@ -12,17 +12,23 @@ namespace PD3Stars.Presenters
         [SerializeField]
         private CharacterController _controller;
 
-        protected float _moveSpeed;
         private Vector2 _moveInput;
+
+        private UIDocument _hudDocument;
+        private HealthBarPresenter _hbPresenter;
 
         protected override void FixedUpdate()
         {
             if (Model.Health <= 0)
                 HPReachedZero();
 
-            if (_moveInput != Vector2.zero) Move();
+            if (_moveInput != Vector2.zero) Model.Move(_controller, _moveInput);
 
             base.FixedUpdate();
+        }
+        protected virtual void LateUpdate()
+        {
+            _hbPresenter?.UpdatePosition();
         }
 
         public virtual void HPReachedZero()
@@ -39,17 +45,19 @@ namespace PD3Stars.Presenters
         {
             _moveInput = context.ReadValue<Vector2>();
         }
-        private void Move()
-        {
-            Vector3 moveBy =
-                new Vector3(_moveInput.x * _moveSpeed * Time.fixedDeltaTime, 0, _moveInput.y * _moveSpeed * Time.fixedDeltaTime);
-
-            _controller.transform.LookAt(transform.position + moveBy);
-            _controller.Move(moveBy);
-        }
 
         protected override void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
         { }
+
+        public void AddHB(UIDocument hudDocument, VisualTreeAsset hbUXML)
+        {
+            _hudDocument = hudDocument;
+            VisualElement cloneRoot = hbUXML.CloneTree();
+
+            Transform hbTransform = transform.Find("HealthBar Anchor");
+            if (hbTransform != null)
+                _hbPresenter = new HealthBarPresenter(Model, hbTransform, cloneRoot, _hudDocument);
+        }
 
         #region Inputs
         private bool _started;

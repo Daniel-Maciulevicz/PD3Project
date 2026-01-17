@@ -14,12 +14,9 @@ namespace PD3Stars.Presenters
             bullet.GetComponent<ColtBulletPresenter>().Model = args.Bullet;
         }
 
-        private void Awake()
+        protected override void OnModelChanged(Colt previousModel)
         {
-            Model = new Colt();
             Model.ColtBulletCreated += CreateBullet;
-
-            _moveSpeed = 5;
         }
     }
 }

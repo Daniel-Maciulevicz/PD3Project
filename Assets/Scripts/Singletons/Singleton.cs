@@ -1,21 +1,10 @@
+using System;
 using UnityEngine;
 
-public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+public sealed class Singleton<T> where T : new()
 {
-    public static T Instance { get; private set; }
+    private static Lazy<T> _instance = new Lazy<T>(() => new T());
+    public static T Instance => _instance.Value;
 
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this as T;
-
-            transform.SetParent(null);
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+    private Singleton() { }
 }

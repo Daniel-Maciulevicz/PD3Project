@@ -1,17 +1,44 @@
-using UnityEngine;
+using PD3Stars.Presenters;
+using System;
+using System.Collections.Generic;
 
-public class PD3StarsGame : UnityModelBaseClass
+namespace PD3Stars.Models
 {
-    public void SpawnBot(GameObject brawler, Transform position)
+    public class PD3StarsGame : UnityModelBaseClass
     {
-        GameObject spawnedBrawler = GameObject.Instantiate(brawler, position.position, position.rotation);
-        spawnedBrawler.transform.parent = null;
+        private List<Brawler> _brawlers = new List<Brawler>();
+
+        public event EventHandler<BrawlerSpawnedEventArgs> BrawlerSpawned;
+
+        public void AddColt()
+        {
+            Colt colt = new Colt();
+            _brawlers.Add(colt);
+
+            TrySetPlayer(colt);
+
+            OnBrawlerSpawned(new BrawlerSpawnedEventArgs(colt));
+        }
+
+        private void TrySetPlayer(Brawler brawler)
+        {
+            if (_brawlers.Count == 1)
+                Singleton<HUD>.Instance.Brawler = brawler;
+        }
+
+        private void OnBrawlerSpawned(BrawlerSpawnedEventArgs args)
+        {
+            BrawlerSpawned.Invoke(this, args);
+        }
     }
-    public void SpawnPlayer(GameObject brawler, GameObject camera, Transform position)
+
+    public class BrawlerSpawnedEventArgs : EventArgs
     {
-        GameObject spawnedBrawler = GameObject.Instantiate(brawler, position.position, position.rotation);
-        spawnedBrawler.transform.parent = null;
-        GameObject spawnedCamera = GameObject.Instantiate(camera, position.position, position.rotation);
-        spawnedCamera.GetComponent<CameraMovement>()._target = spawnedBrawler.transform;
+        public Brawler Brawler { get; private set; }
+
+        public BrawlerSpawnedEventArgs(Brawler brawler)
+        {
+            Brawler = brawler;
+        }
     }
 }
