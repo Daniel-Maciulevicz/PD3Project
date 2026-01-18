@@ -13,10 +13,20 @@ namespace PD3Stars.Presenters
         [SerializeField]
         private VisualTreeAsset _healthBarUXML;
         [SerializeField]
+        private GameObject _cameraPrefab;
+
+        [Space]
+        [Header("Spawning")]
+
+        [SerializeField]
         private List<Transform> _spawnPoints;
+        [SerializeField]
+        private bool _randomizeSpawns;
         private int _brawlersSpawned;
         [SerializeField]
-        private GameObject _cameraPrefab;
+        private string _spawnPlayer;
+        [SerializeField]
+        private List<string> _spawnBots;
 
         [Space]
         [Header("Brawler Prefabs")]
@@ -26,14 +36,48 @@ namespace PD3Stars.Presenters
 
         private void Awake()
         {
+            if (_spawnPlayer == null)
+                Destroy(gameObject);
+
             Model = new PD3StarsGame();
 
-            Model.AddColt();
+            if (_randomizeSpawns)
+            {
+                for (int v1 = _spawnPoints.Count - 1; v1 >= 0; v1--)
+                {
+                    int v2 = Random.Range(0, _spawnPoints.Count - 1);
+                    Transform point = _spawnPoints[v2];
+                    _spawnPoints[v2] = _spawnPoints[v1];
+                    _spawnPoints[v1] = point;
+                }
+            }
+
+            SpawnBrawler(_spawnPlayer);
+            foreach (string name in _spawnBots)
+            {
+                SpawnBrawler(name);
+            }
+        }
+
+        private void SpawnBrawler(string name)
+        {
+            switch (name)
+            {
+                case "Colt":
+                    Model.AddColt();
+                    break;
+                default:
+                    Destroy(gameObject);
+                    break;
+            }
         }
 
         private void OnBrawlerSpawned(object sender, BrawlerSpawnedEventArgs args)
         {
             ColtPresenter presenter = null;
+
+            if (_brawlersSpawned >= _spawnPoints.Count)
+                return;
 
             switch (args.Brawler)
             {
