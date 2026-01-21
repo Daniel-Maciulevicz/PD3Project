@@ -3,6 +3,7 @@ using UnityEngine;
 using PD3Stars.Models;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
+using PD3Stars.Strategies;
 
 namespace PD3Stars.Presenters
 {
@@ -33,13 +34,15 @@ namespace PD3Stars.Presenters
 
         [SerializeField]
         private GameObject _coltPrefab;
+        [SerializeField]
+        private GameObject _elPrimoPrefab;
 
         private void Awake()
         {
             if (_spawnPlayer == null)
                 Destroy(gameObject);
 
-            Model = new PD3StarsGame();
+            Model = Singleton<PD3StarsGame>.Instance;
 
             if (_randomizeSpawns)
             {
@@ -64,7 +67,10 @@ namespace PD3Stars.Presenters
             switch (name)
             {
                 case "Colt":
-                    Model.AddColt();
+                    Model.Add(new Colt());
+                    break;
+                case "ElPrimo":
+                    Model.Add(new ElPrimo());
                     break;
                 default:
                     Destroy(gameObject);
@@ -74,28 +80,48 @@ namespace PD3Stars.Presenters
 
         private void OnBrawlerSpawned(object sender, BrawlerSpawnedEventArgs args)
         {
-            ColtPresenter presenter = null;
-
             if (_brawlersSpawned >= _spawnPoints.Count)
                 return;
+
+            GameObject brawlerObj = null;
+            BrawlerPresenter presenter = null;
+            Brawler brawler = null;
 
             switch (args.Brawler)
             {
                 case Colt colt:
 
-                    GameObject obj = Instantiate(_coltPrefab, _spawnPoints[_brawlersSpawned]);
-                    presenter = obj.GetComponent<ColtPresenter>();
+                    brawlerObj = Instantiate(_coltPrefab, _spawnPoints[_brawlersSpawned]);
+                    presenter = brawlerObj.GetComponent<ColtPresenter>();
+                    brawler = colt;
 
-                    presenter.Model = colt;
+                    break;
+
+                case ElPrimo elPrimo:
+
+                    brawlerObj = Instantiate(_elPrimoPrefab, _spawnPoints[_brawlersSpawned]);
+                    presenter = brawlerObj.GetComponent<ElPrimoPresenter>();
+                    brawler = elPrimo;
 
                     break;
             }
 
+            presenter.Model = brawler;
             presenter.transform.parent = null;
             presenter.AddHB(_hud, _healthBarUXML);
 
             if (_brawlersSpawned == 0)
-                Instantiate(_cameraPrefab, presenter.transform.position, Quaternion.identity).GetComponent<CameraMovement>()._target = presenter.transform;
+            {
+                presenter.MovementStrategy = new UserMovementStrategy(brawler, presenter);
+                presenter.AttackStrategy = new UserAttackStrategy(brawler, presenter);
+
+                Instantiate(_cameraPrefab, brawlerObj.transform.position, Quaternion.identity).GetComponent<CameraMovement>()._target = brawlerObj.transform;
+            }
+            else
+            {
+                presenter.MovementStrategy = new CirclesMovementStrategy(brawler, presenter);
+                presenter.AttackStrategy = new ASAPAttackStrategy(brawler, presenter);
+            }
 
             _brawlersSpawned++;
         }

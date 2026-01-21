@@ -1,28 +1,34 @@
 using PD3Stars.Models;
+using PD3Stars.Strategies;
 using PD3Stars.UI;
+using System;
 using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace PD3Stars.Presenters
 {
-    public abstract class BrawlerPresenter<T> : PresenterBaseClass<T> where T : Brawler
+    public abstract class BrawlerPresenter : PresenterBaseClass<Brawler>
     {
         [SerializeField]
         private CharacterController _controller;
 
-        private Vector2 _moveInput;
+        public MovementStrategyBaseClass MovementStrategy { get; set; }
+        public AttackStrategyBaseClass AttackStrategy { get; set; }
 
         private UIDocument _hudDocument;
         private HealthBarPresenter _hbPresenter;
+
+        protected float _moveSpeed = 5;
 
         protected override void FixedUpdate()
         {
             if (Model.Health <= 0)
                 HPReachedZero();
 
-            if (_moveInput != Vector2.zero) Model.Move(_controller, _moveInput);
+            MovementStrategy.FixedUpdate(Time.fixedDeltaTime);
+            if (MovementStrategy.MoveInput != Vector2.zero) Move(_controller, MovementStrategy.MoveInput);
+            AttackStrategy.FixedUpdate(Time.fixedDeltaTime);
 
             base.FixedUpdate();
         }
@@ -36,18 +42,22 @@ namespace PD3Stars.Presenters
             Destroy(gameObject);
         }
 
-        public void OnAttackInput(InputAction.CallbackContext context)
+        public void RequestAttack(object sender, EventArgs args)
         {
             Model.PAFSM.CurrentState.PrimaryAttackRequest();
         }
 
-        public void OnMoveInput(InputAction.CallbackContext context)
-        {
-            _moveInput = context.ReadValue<Vector2>();
-        }
-
         protected override void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
         { }
+
+        public void Move(CharacterController controller, Vector2 moveInput)
+        {
+            Vector3 moveBy =
+                new Vector3(moveInput.x * _moveSpeed * Time.fixedDeltaTime, 0, moveInput.y * _moveSpeed * Time.fixedDeltaTime);
+
+            controller.transform.LookAt(controller.transform.position + moveBy);
+            controller.Move(moveBy);
+        }
 
         public void AddHB(UIDocument hudDocument, VisualTreeAsset hbUXML)
         {
@@ -59,49 +69,9 @@ namespace PD3Stars.Presenters
                 _hbPresenter = new HealthBarPresenter(Model, hbTransform, cloneRoot, _hudDocument);
         }
 
-        #region Inputs
-        private bool _started;
-
         private void Start()
         {
-            EnableInputs();
-
-            _started = true;
+            AttackStrategy.AttackStarted += RequestAttack;
         }
-        private void OnEnable()
-        {
-            if (_started)
-                EnableInputs();
-        }
-        private void EnableInputs()
-        {
-            InputActionMap map = InputManager.Input.actions.FindActionMap("Player");
-
-            map.FindAction("Move").started += OnMoveInput;
-            map.FindAction("Move").performed += OnMoveInput;
-            map.FindAction("Move").canceled += OnMoveInput;
-            map.FindAction("Attack").started += OnAttackInput;
-            map.FindAction("Attack").performed += OnAttackInput;
-            map.FindAction("Attack").canceled += OnAttackInput;
-        }
-        private void OnDisable()
-        {
-            DisableInputs();
-        }
-        private void DisableInputs()
-        {
-            if (InputManager.Input == null)
-                return;
-
-            InputActionMap map = InputManager.Input.actions.FindActionMap("Player");
-
-            map.FindAction("Move").started -= OnMoveInput;
-            map.FindAction("Move").performed -= OnMoveInput;
-            map.FindAction("Move").canceled -= OnMoveInput;
-            map.FindAction("Attack").started -= OnAttackInput;
-            map.FindAction("Attack").performed -= OnAttackInput;
-            map.FindAction("Attack").canceled -= OnAttackInput;
-        }
-        #endregion Inputs
     }
 }

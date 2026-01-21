@@ -460,7 +460,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e19d789e9d4204b459408d9b13ed6a09, type: 2}
+  - {fileID: 2100000, guid: 100ad0ced1e3c224081aaebcd84ad045, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -732,11 +732,12 @@ MonoBehaviour:
   _randomizeSpawns: 1
   _spawnPlayer: Colt
   _spawnBots:
+  - ElPrimo
   - Colt
-  - Colt
-  - Colt
+  - ElPrimo
   - Colt
   _coltPrefab: {fileID: 1067438074925215682, guid: 6a3465a0b9f8513498808d24f80662b4, type: 3}
+  _elPrimoPrefab: {fileID: 6439903961317840814, guid: a79cbc7d241614f478ca139e207d1a60, type: 3}
 --- !u!4 &2136584621
 Transform:
   m_ObjectHideFlags: 0

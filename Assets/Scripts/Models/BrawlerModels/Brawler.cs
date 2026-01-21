@@ -1,18 +1,15 @@
 using PD3Stars.Models.FSM;
 using PD3Stars.UI;
 using System;
-using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 namespace PD3Stars.Models
 {
     public abstract class Brawler : UnityModelBaseClass, IHealthBar
     {
-        protected float _maxHealth = 1000;
-        [Tooltip("Percent / Second")]
-        protected float _regenSpeed = 0.13f;
+        public int ID { get; set; }
 
-        protected float _moveSpeed = 5;
+        protected float _maxHealth = 1000;
+        protected float _regenSpeed = 0.13f;
 
         public BrawlerHPFSM HPFSM { get; set; }
         public BrawlerPAFSM PAFSM { get; set; }
@@ -64,15 +61,6 @@ namespace PD3Stars.Models
         }
 
         public abstract void PrimaryAttackRequest();
-
-        public void Move(CharacterController controller, Vector2 moveInput)
-        {
-            Vector3 moveBy =
-                new Vector3(moveInput.x * _moveSpeed * Time.fixedDeltaTime, 0, moveInput.y * _moveSpeed * Time.fixedDeltaTime);
-
-            controller.transform.LookAt(controller.transform.position + moveBy);
-            controller.Move(moveBy);
-        }
 
         public Brawler()
         {

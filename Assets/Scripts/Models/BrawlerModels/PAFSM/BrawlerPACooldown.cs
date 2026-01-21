@@ -1,5 +1,3 @@
-using PD3Stars.Models.FSM;
-using UnityEngine;
 
 namespace PD3Stars.Models.FSM
 {

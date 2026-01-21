@@ -48,8 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraMovement
   _target: {fileID: 0}
-  _offset: {x: 0, y: 5.6, z: -5.8}
-  _rotation: {x: 40, y: 0, z: 0}
+  _offset: {x: 0, y: 7.8, z: -5.5}
+  _rotation: {x: 55, y: 0, z: 0}
 --- !u!20 &7830697455735268142
 Camera:
   m_ObjectHideFlags: 0

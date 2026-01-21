@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using PD3Animations;
+using UnityEngine.InputSystem;
 
 public class SpiralLogic : MonoBehaviour, IAnimated<float>
 {
@@ -38,11 +38,48 @@ public class SpiralLogic : MonoBehaviour, IAnimated<float>
         Debug.Log("Spiral animation ended");
     }
 
-    public void OnSpaceInput(InputAction.CallbackContext context)
+    public void OnJumpInput(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
             _moveLinearAnimation.TogglePaused();
         }
     }
+
+    #region Inputs
+    private bool _started = false;
+
+    private void Start()
+    {
+        EnableInputs();
+
+        _started = true;
+    }
+    private void OnEnable()
+    {
+        if (_started)
+            EnableInputs();
+    }
+    private void EnableInputs()
+    {
+        InputActionMap map = InputHandler.Input.actions.FindActionMap("Player");
+
+        map.FindAction("Jump").started += OnJumpInput;
+        map.FindAction("Jump").performed += OnJumpInput;
+        map.FindAction("Jump").canceled += OnJumpInput;
+    }
+    private void OnDisable()
+    {
+        if (InputHandler.Input != null)
+            DisableInputs();
+    }
+    private void DisableInputs()
+    {
+        InputActionMap map = InputHandler.Input.actions.FindActionMap("Player");
+
+        map.FindAction("Jump").started -= OnJumpInput;
+        map.FindAction("Jump").performed -= OnJumpInput;
+        map.FindAction("Jump").canceled -= OnJumpInput;
+    }
+    #endregion Inputs
 }

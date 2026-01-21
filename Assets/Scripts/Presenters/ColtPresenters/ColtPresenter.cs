@@ -3,20 +3,21 @@ using UnityEngine;
 
 namespace PD3Stars.Presenters
 {
-    public class ColtPresenter : BrawlerPresenter<Colt>
+    public class ColtPresenter : BrawlerPresenter
     {
         [SerializeField]
         private GameObject _coltBullet;
 
         private void CreateBullet(object sender, ColtBulletCreatedArgs args)
         {
-            GameObject bullet = Instantiate(_coltBullet, transform.position, transform.rotation);
+            GameObject bullet = Instantiate(_coltBullet, transform);
             bullet.GetComponent<ColtBulletPresenter>().Model = args.Bullet;
         }
 
-        protected override void OnModelChanged(Colt previousModel)
+        protected override void OnModelChanged(Brawler previousModel)
         {
-            Model.ColtBulletCreated += CreateBullet;
+            (Model as Colt).BulletPool.ColtBulletCreated += CreateBullet;
+            (Model as Colt).BulletPool.GeneratePool(20);
         }
     }
 }

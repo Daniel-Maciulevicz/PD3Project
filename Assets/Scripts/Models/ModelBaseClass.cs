@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
 public class ModelBaseClass : INotifyPropertyChanged
 {

@@ -7,7 +7,9 @@ namespace PD3Stars.Presenters
 {
     public class ColtBulletPresenter : PresenterBaseClass<ColtBullet>
     {
-        protected float _speed = 12;
+        protected float _speed;
+
+        private Transform _parentTransform;
 
         protected override void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
         { }
@@ -21,12 +23,31 @@ namespace PD3Stars.Presenters
 
         protected override void OnModelChanged(ColtBullet previousModel)
         {
-            Model.BulletDestroyed += OnBulletDestroyed;
+            Model.BulletActivated += OnBulletActivated;
+            Model.BulletDeactivated += OnBulletDeactivated;
+        }
+        private void OnBulletActivated(object sender, EventArgs args)
+        {
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+            _parentTransform = transform.parent;
+            transform.parent = null;
+
+            gameObject.SetActive(true);
+        }
+        private void OnBulletDeactivated(object sender, EventArgs args)
+        {
+            gameObject.SetActive(false);
+
+            transform.parent = _parentTransform;
         }
 
-        private void OnBulletDestroyed(object sender, EventArgs args)
+        private void Awake()
         {
-            Destroy(gameObject);
+            _speed = 12;
+
+            _parentTransform = transform.parent;
         }
     }
 }

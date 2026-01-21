@@ -1,4 +1,3 @@
-using PD3Stars.Presenters;
 using System;
 using System.Collections.Generic;
 
@@ -10,20 +9,11 @@ namespace PD3Stars.Models
 
         public event EventHandler<BrawlerSpawnedEventArgs> BrawlerSpawned;
 
-        public void AddColt()
+        public void Add(Brawler brawler)
         {
-            Colt colt = new Colt();
-            _brawlers.Add(colt);
+            _brawlers.Add(brawler);
 
-            TrySetPlayer(colt);
-
-            OnBrawlerSpawned(new BrawlerSpawnedEventArgs(colt));
-        }
-
-        private void TrySetPlayer(Brawler brawler)
-        {
-            if (_brawlers.Count == 1)
-                Singleton<HUD>.Instance.Brawler = brawler;
+            OnBrawlerSpawned(new BrawlerSpawnedEventArgs(brawler));
         }
 
         private void OnBrawlerSpawned(BrawlerSpawnedEventArgs args)

@@ -8,5 +8,4 @@ namespace PD3Animations
 
         public void AnimationEnded(object sender, EventArgs args);
     }
-
 }

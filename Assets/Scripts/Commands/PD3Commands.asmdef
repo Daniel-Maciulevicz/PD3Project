@@ -1,0 +1,17 @@
+{
+    "name": "PD3Commands",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d26277db2dee2574e8c1f08fb44cd7ac",
+        "GUID:6e135eb1d2f6b4d4cb421c0352f5d2d3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
