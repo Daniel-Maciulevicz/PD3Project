@@ -18,12 +18,10 @@ namespace PD3Animations
             }
             public void TogglePaused()
             {
-                if (CurrentState == Paused || CurrentState == Created)
-                    CurrentState = Running;
-                else if (CurrentState == Running)
+                if (CurrentState == Running)
                     CurrentState = Paused;
-                if (CurrentState == Ended)
-                    CurrentState = Created;
+                else if (CurrentState == Paused)
+                    CurrentState = Running;
             }
             public void Reset()
             {

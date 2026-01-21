@@ -4,16 +4,11 @@ using PD3Animations;
 
 public class LinearMoveInSpiral : MonoBehaviour, IAnimated<float>
 {
-    private Vector3 _endPosition;
-
-    private void Awake()
-    {
-        _endPosition = transform.localPosition;
-    }
+    public Vector3 EndPosition { get; set; }
 
     public void ValueChanged(object sender, ValueChangedArgs<float> args)
     {
-        transform.localPosition = _endPosition * args.NewValue;
+        transform.localPosition = EndPosition * args.NewValue;
     }
 
     public void AnimationEnded(object sender, EventArgs args)

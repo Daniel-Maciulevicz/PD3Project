@@ -7,6 +7,7 @@ namespace PD3Stars.Presenters
 {
     public class ColtBulletPresenter : PresenterBaseClass<ColtBullet>
     {
+        protected float _damage;
         protected float _speed;
 
         private Transform _parentTransform;
@@ -43,9 +44,19 @@ namespace PD3Stars.Presenters
             transform.parent = _parentTransform;
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Brawler"))
+            {
+                other.GetComponent<BrawlerPresenter>().Model.Health -= _damage;
+                OnBulletDeactivated(this, EventArgs.Empty);
+            }
+        }
+
         private void Awake()
         {
             _speed = 12;
+            _damage = 100;
 
             _parentTransform = transform.parent;
         }

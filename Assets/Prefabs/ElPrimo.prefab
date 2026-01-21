@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 8144039880113354867}
   - component: {fileID: 639312073118172660}
   - component: {fileID: 2343224449032207547}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ElPrimo
-  m_TagString: Untagged
+  m_TagString: Brawler
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -139,7 +139,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1121916331942151705}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: HealthBar Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

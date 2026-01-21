@@ -12,6 +12,8 @@ namespace PD3Stars.Presenters
         {
             GameObject bullet = Instantiate(_coltBullet, transform);
             bullet.GetComponent<ColtBulletPresenter>().Model = args.Bullet;
+
+            Physics.IgnoreCollision(bullet.GetComponent<Collider>(), _controller);
         }
 
         protected override void OnModelChanged(Brawler previousModel)

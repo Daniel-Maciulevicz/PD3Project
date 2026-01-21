@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 3587797836871022027}
   - component: {fileID: 2662011573154048118}
   - component: {fileID: 2243767060139915906}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Colt
-  m_TagString: Untagged
+  m_TagString: Brawler
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -140,7 +140,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8910508023406518650}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: HealthBar Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

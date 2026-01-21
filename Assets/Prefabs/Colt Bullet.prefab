@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2917312773160317953}
   - component: {fileID: 6314694141109087418}
   - component: {fileID: 1420645697528902284}
+  - component: {fileID: -8375956196301211835}
   m_Layer: 0
   m_Name: Colt Bullet
   m_TagString: Untagged
@@ -102,3 +103,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24ae7aebc545c2c4994e5198ed6ae93e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PD3Stars.Models.ColtBulletPresenter
+--- !u!135 &-8375956196301211835
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8229177665213617617}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}

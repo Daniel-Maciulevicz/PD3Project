@@ -12,21 +12,23 @@ public class SpiralLogic : MonoBehaviour, IAnimated<float>
 
     private Animation<float> _moveLinearAnimation;
 
+    private bool _animationRunning = false;
+
     private void Awake()
     {
-        _moveLinearAnimation = new Animation<float>(10, 1, _duration, Mathf.Lerp);
+        _moveLinearAnimation = new Animation<float>(10, 1, _duration, Mathf.Lerp, EaseStyle.BackEaseOut);
 
         _endEuler = transform.localEulerAngles;
-        foreach (IAnimated<float> subscriber in GetComponentsInChildren<IAnimated<float>>())
+        foreach (LinearMoveInSpiral subscriber in GetComponentsInChildren<LinearMoveInSpiral>())
         {
+            subscriber.EndPosition = subscriber.transform.position;
             _moveLinearAnimation.ValueChanged += subscriber.ValueChanged;
         }
+        _moveLinearAnimation.ValueChanged += ValueChanged;
         _moveLinearAnimation.AnimationEnd += AnimationEnded;
-    }
 
-    private void FixedUpdate()
-    {
-        _moveLinearAnimation.Update(Time.fixedDeltaTime);
+        StartCoroutine(_moveLinearAnimation.Start());
+        _animationRunning = true;
     }
 
     public void ValueChanged(object sender, ValueChangedArgs<float> args)
@@ -35,14 +37,24 @@ public class SpiralLogic : MonoBehaviour, IAnimated<float>
     }
     public void AnimationEnded(object sender, EventArgs args)
     {
+        _animationRunning = false;
+
         Debug.Log("Spiral animation ended");
     }
 
     public void OnJumpInput(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.started)
         {
-            _moveLinearAnimation.TogglePaused();
+            if (_animationRunning)
+            {
+                _moveLinearAnimation.TogglePaused();
+            }
+            else
+            {
+                StartCoroutine(_moveLinearAnimation.Start());
+                _animationRunning = true;
+            }
         }
     }
 

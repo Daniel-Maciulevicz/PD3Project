@@ -12,9 +12,10 @@ namespace PD3Stars.Models.FSM
 
         public override void Update(float deltaTime)
         {
-            _cooldownTimer -= deltaTime;
+            if (_cooldownTimer <= 0)
+                FSM.CurrentState = FSM.RegeneratingState;
 
-            FSM.CurrentState = FSM.RegeneratingState;
+            _cooldownTimer -= deltaTime;
         }
 
         public BrawlerHPCoolDownState(BrawlerHPFSM fsm) : base(fsm) { }

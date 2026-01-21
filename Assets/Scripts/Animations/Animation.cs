@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using UnityEngine;
 
 namespace PD3Animations
 {
@@ -28,22 +30,39 @@ namespace PD3Animations
 
         public float TotallElapsed { get; set; }
 
-        public float Progress { get { return TotallElapsed / Duration; } }
+        public float Progress 
+        { 
+            get 
+            { 
+                float progress = TotallElapsed / Duration;
+
+                if (EasingFunction != null)
+                {
+                    progress = EasingFunction.Invoke(progress, 0, 1, 1);
+                }
+
+                return progress;
+            } 
+        }
         public T ProgressValue { get { return LerpValue(From, To, Progress); } }
 
         public Func<T, T, float, T> LerpValue { get; private set; }
+        public Ease EasingFunction { get; private set; }
 
         private AnimationFSM FSM;
 
-        private bool _loop;
-
-        public void Start()
+        public IEnumerator Start()
         {
+            if (FSM.CurrentState == FSM.Ended)
+                FSM.Reset();
+            if (FSM.CurrentState != FSM.Created)
+                yield break;
             FSM.Start();
-        }
-        public void Update(float deltaTime)
-        {
-            FSM.Update(deltaTime);
+            while (FSM.CurrentState != FSM.Ended)
+            {
+                FSM.Update(Time.deltaTime);
+                yield return null;
+            }
         }
         public void TogglePaused()
         {
@@ -56,12 +75,6 @@ namespace PD3Animations
         private void OnAnimationEnd()
         {
             AnimationEnd?.Invoke(this, EventArgs.Empty);
-
-            if (_loop)
-            {
-                ResetAnimation();
-                Start();
-            }
         }
 
         public void ResetAnimation()
@@ -73,15 +86,23 @@ namespace PD3Animations
             OnValueChanged(previousProgressValue, ProgressValue, Progress);
         }
 
-        public Animation(T from, T to, float duration, Func<T, T, float, T> lerpT, bool loop = false)
+        public Animation(T from, T to, float duration, Func<T, T, float, T> lerpT, EaseStyle easeStyle)
         {
             From = from;
             To = to;
             Duration = duration;
             LerpValue = lerpT;
             FSM = new AnimationFSM(this);
-            _loop = loop;
+            EasingFunction = EaseMethods.GetEase(easeStyle);
+        }
+        public Animation(T from, T to, float duration, Func<T, T, float, T> lerpT)
+        {
+            From = from;
+            To = to;
+            Duration = duration;
+            LerpValue = lerpT;
+            FSM = new AnimationFSM(this);
+            EasingFunction = null;
         }
     }
-
 }

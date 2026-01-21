@@ -48,6 +48,9 @@ namespace PD3Stars.Models
         }
 
         public event EventHandler HealthChanged;
+        public event EventHandler Respawned;
+
+        public bool CanMove { get; set; }
 
         public virtual void HPRegenerate(float deltaTime)
         {
@@ -60,11 +63,27 @@ namespace PD3Stars.Models
             PAFSM.Update(fixedDeltaTime);
         }
 
+        public virtual void DeathRequest()
+        {
+            HPFSM.CurrentState = HPFSM.DeadState;
+            PAFSM.CurrentState = PAFSM.DeadState;
+        }
+        public virtual void RespawnRequest()
+        {
+            Health = _maxHealth;
+
+            HPFSM.CurrentState = HPFSM.CooldownState;
+            PAFSM.CurrentState = PAFSM.CooldownState;
+
+            Respawned.Invoke(this, EventArgs.Empty);
+        }
         public abstract void PrimaryAttackRequest();
 
         public Brawler()
         {
             _health = _maxHealth;
+
+            CanMove = true;
         }
     }
 }

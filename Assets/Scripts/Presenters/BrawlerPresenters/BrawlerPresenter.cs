@@ -10,8 +10,11 @@ namespace PD3Stars.Presenters
 {
     public abstract class BrawlerPresenter : PresenterBaseClass<Brawler>
     {
+        protected override void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
+        { }
+
         [SerializeField]
-        private CharacterController _controller;
+        protected CharacterController _controller;
 
         public MovementStrategyBaseClass MovementStrategy { get; set; }
         public AttackStrategyBaseClass AttackStrategy { get; set; }
@@ -19,15 +22,15 @@ namespace PD3Stars.Presenters
         private UIDocument _hudDocument;
         private HealthBarPresenter _hbPresenter;
 
+        private Vector3 _spawnPos;
+
         protected float _moveSpeed = 5;
 
         protected override void FixedUpdate()
         {
-            if (Model.Health <= 0)
-                HPReachedZero();
-
             MovementStrategy.FixedUpdate(Time.fixedDeltaTime);
-            if (MovementStrategy.MoveInput != Vector2.zero) Move(_controller, MovementStrategy.MoveInput);
+            if (Model.CanMove && MovementStrategy.MoveInput != Vector2.zero) 
+                Move(_controller, MovementStrategy.MoveInput);
             AttackStrategy.FixedUpdate(Time.fixedDeltaTime);
 
             base.FixedUpdate();
@@ -37,26 +40,14 @@ namespace PD3Stars.Presenters
             _hbPresenter?.UpdatePosition();
         }
 
-        public virtual void HPReachedZero()
+        private void OnHealthChanged(object sender, EventArgs args)
         {
-            Destroy(gameObject);
+            if (Model.Health <= 0)
+                Model.DeathRequest();
         }
-
-        public void RequestAttack(object sender, EventArgs args)
+        private void OnRespawned(object sender, EventArgs args)
         {
-            Model.PAFSM.CurrentState.PrimaryAttackRequest();
-        }
-
-        protected override void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
-        { }
-
-        public void Move(CharacterController controller, Vector2 moveInput)
-        {
-            Vector3 moveBy =
-                new Vector3(moveInput.x * _moveSpeed * Time.fixedDeltaTime, 0, moveInput.y * _moveSpeed * Time.fixedDeltaTime);
-
-            controller.transform.LookAt(controller.transform.position + moveBy);
-            controller.Move(moveBy);
+            transform.position = _spawnPos;
         }
 
         public void AddHB(UIDocument hudDocument, VisualTreeAsset hbUXML)
@@ -68,10 +59,27 @@ namespace PD3Stars.Presenters
             if (hbTransform != null)
                 _hbPresenter = new HealthBarPresenter(Model, hbTransform, cloneRoot, _hudDocument);
         }
+        public void Move(CharacterController controller, Vector2 moveInput)
+        {
+            Vector3 moveBy =
+                new Vector3(moveInput.x * _moveSpeed * Time.fixedDeltaTime, 0, moveInput.y * _moveSpeed * Time.fixedDeltaTime);
+
+            controller.transform.LookAt(controller.transform.position + moveBy);
+            controller.Move(moveBy);
+        }
+        private void RequestAttack(object sender, EventArgs args)
+        {
+            Model.PAFSM.CurrentState.PrimaryAttackRequest();
+        }
 
         private void Start()
         {
             AttackStrategy.AttackStarted += RequestAttack;
+
+            Model.HealthChanged += OnHealthChanged;
+            Model.Respawned += OnRespawned;
+
+            _spawnPos = transform.position;
         }
     }
 }
