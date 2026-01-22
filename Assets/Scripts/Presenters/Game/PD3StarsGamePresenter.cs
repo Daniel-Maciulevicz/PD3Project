@@ -4,6 +4,7 @@ using PD3Stars.Models;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using PD3Stars.Strategies;
+using PD3Stars.Commands;
 
 namespace PD3Stars.Presenters
 {
@@ -67,13 +68,13 @@ namespace PD3Stars.Presenters
             switch (name)
             {
                 case "Colt":
-                    Model.Add(new Colt());
+                    Singleton<CommandManager>.Instance.Execute(new CreateColt());
                     break;
                 case "ElPrimo":
-                    Model.Add(new ElPrimo());
+                    Singleton<CommandManager>.Instance.Execute(new CreateElPrimo());
                     break;
                 default:
-                    Destroy(gameObject);
+                    Debug.Log("Brawler '" + name + "' does not exist");
                     break;
             }
         }
@@ -108,7 +109,6 @@ namespace PD3Stars.Presenters
 
             presenter.Model = brawler;
             presenter.transform.parent = null;
-            presenter.AddHB(_hud, _healthBarUXML);
 
             if (_brawlersSpawned == 0)
             {
@@ -122,6 +122,8 @@ namespace PD3Stars.Presenters
                 presenter.MovementStrategy = new CirclesMovementStrategy(brawler, presenter);
                 presenter.AttackStrategy = new ASAPAttackStrategy(brawler, presenter);
             }
+
+            presenter.AddHB();
 
             _brawlersSpawned++;
         }

@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed96e19e5f747b0438d664d3d5c66e26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PD3Stars.Models.ColtPresenter
+  _healthBarPrefab: {fileID: 6916324099817057587, guid: ddc04653bfbb1ac4f914d1d60621d8cc, type: 3}
   _controller: {fileID: 2243767060139915906}
   _coltBullet: {fileID: 8229177665213617617, guid: a8ff3f1d915d49e4b84de1c72ab1b3bf, type: 3}
 --- !u!33 &3587797836871022027

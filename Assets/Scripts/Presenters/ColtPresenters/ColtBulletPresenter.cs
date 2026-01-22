@@ -51,6 +51,10 @@ namespace PD3Stars.Presenters
                 other.GetComponent<BrawlerPresenter>().Model.Health -= _damage;
                 OnBulletDeactivated(this, EventArgs.Empty);
             }
+            else
+            {
+                Model.Deactivate();
+            }
         }
 
         private void Awake()

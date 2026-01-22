@@ -10,6 +10,9 @@ namespace PD3Stars.Presenters
 {
     public abstract class BrawlerPresenter : PresenterBaseClass<Brawler>
     {
+        [SerializeField]
+        private GameObject _healthBarPrefab;
+
         protected override void ModelPropertyChanged(object sender, PropertyChangedEventArgs args)
         { }
 
@@ -19,13 +22,11 @@ namespace PD3Stars.Presenters
         public MovementStrategyBaseClass MovementStrategy { get; set; }
         public AttackStrategyBaseClass AttackStrategy { get; set; }
 
-        private UIDocument _hudDocument;
-        private HealthBarPresenter _hbPresenter;
-
         private Vector3 _spawnPos;
 
         protected float _moveSpeed = 5;
 
+        private HealthBarCanvasPresenter _hbPresenter;
         private HUDElementPresenter _hudPresenter;
 
         protected override void FixedUpdate()
@@ -52,14 +53,13 @@ namespace PD3Stars.Presenters
             transform.position = _spawnPos;
         }
 
-        public void AddHB(UIDocument hudDocument, VisualTreeAsset hbUXML)
+        public void AddHB()
         {
-            _hudDocument = hudDocument;
-            VisualElement cloneRoot = hbUXML.CloneTree();
-
-            Transform hbTransform = transform.Find("HealthBar Anchor");
-            if (hbTransform != null)
-                _hbPresenter = new HealthBarPresenter(Model, hbTransform, cloneRoot, _hudDocument);
+            GameObject hb = Instantiate(_healthBarPrefab, transform.Find("HealthBar Anchor"));
+            _hbPresenter = hb.GetComponent<HealthBarCanvasPresenter>();
+            _hbPresenter.Model = Model;
+            hb.GetComponent<Canvas>().worldCamera = Camera.main;
+            hb.GetComponent<RectTransform>().localPosition = Vector2.zero;
         }
         public void Move(CharacterController controller, Vector2 moveInput)
         {

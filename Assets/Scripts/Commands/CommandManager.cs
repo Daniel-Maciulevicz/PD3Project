@@ -50,7 +50,7 @@ namespace PD3Stars.Commands
             CreateElPrimo.Reset();
         }
 
-        private CommandManager()
+        public CommandManager()
         {
             StartTime = Time.time;
         }
