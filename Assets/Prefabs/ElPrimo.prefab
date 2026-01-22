@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PD3Stars.Presenters.ElPrimoPresenter
   _controller: {fileID: 2343224449032207547}
+  _elPrimoAttackHitboxPrefab: {fileID: 1149812497828174384, guid: a10a8ab2a8ebcc3429dc92062a29229a, type: 3}
 --- !u!33 &8144039880113354867
 MeshFilter:
   m_ObjectHideFlags: 0

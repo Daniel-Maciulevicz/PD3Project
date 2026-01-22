@@ -1,10 +1,11 @@
 using PD3Stars.Models.FSM;
 using PD3Stars.UI;
 using System;
+using System.Diagnostics;
 
 namespace PD3Stars.Models
 {
-    public abstract class Brawler : UnityModelBaseClass, IHealthBar
+    public abstract class Brawler : UnityModelBaseClass, IHealthBar, IHUDElement
     {
         public int ID { get; set; }
 
@@ -34,23 +35,58 @@ namespace PD3Stars.Models
                 else
                     _health = value;
 
+                HealthProgress = Health / _maxHealth;
+
                 OnPropertyChanged();
-                HealthChanged?.Invoke(this, EventArgs.Empty);
+                HealthChanged.Invoke(this, EventArgs.Empty);
             }
         }
         private float _health;
-        public float HealthProgress
-        {
-            get 
-            { 
-                return Health / _maxHealth; 
+        public float HealthProgress 
+        { 
+            get { return _healthProgress; }
+            set
+            {
+                if (_healthProgress == value) return;
+
+                if (value > 1)
+                    _healthProgress = 1;
+                else if (value < 0)
+                    _healthProgress = 0;
+                else
+                    _healthProgress = value;
+
+                HealthProgressChanged?.Invoke(this, new HUDValueChangedArgs(_healthProgress));
             }
         }
+        private float _healthProgress;
+        public float ReloadProgress 
+        { 
+            get { return _reloadProgress; }
+            set
+            {
+                if (_reloadProgress == value) return;
 
-        public event EventHandler HealthChanged;
+                if (value > 1)
+                    _reloadProgress = 1;
+                else if (value < 0)
+                    _reloadProgress = 0;
+                else
+                    _reloadProgress = value;
+
+                ReloadProgressChanged?.Invoke(this, new HUDValueChangedArgs(_reloadProgress));
+            }
+        }
+        private float _reloadProgress;
+
         public event EventHandler Respawned;
 
+        public event EventHandler HealthChanged;
+        public event EventHandler<HUDValueChangedArgs> HealthProgressChanged;
+        public event EventHandler<HUDValueChangedArgs> ReloadProgressChanged;
+
         public bool CanMove { get; set; }
+        public int HUDNumber { get; set; }
 
         public virtual void HPRegenerate(float deltaTime)
         {

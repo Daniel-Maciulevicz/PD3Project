@@ -26,6 +26,8 @@ namespace PD3Stars.Presenters
 
         protected float _moveSpeed = 5;
 
+        private HUDElementPresenter _hudPresenter;
+
         protected override void FixedUpdate()
         {
             MovementStrategy.FixedUpdate(Time.fixedDeltaTime);
@@ -72,7 +74,7 @@ namespace PD3Stars.Presenters
             Model.PAFSM.CurrentState.PrimaryAttackRequest();
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             AttackStrategy.AttackStarted += RequestAttack;
 
@@ -80,6 +82,8 @@ namespace PD3Stars.Presenters
             Model.Respawned += OnRespawned;
 
             _spawnPos = transform.position;
+
+            _hudPresenter = new HUDElementPresenter(Model);
         }
     }
 }
